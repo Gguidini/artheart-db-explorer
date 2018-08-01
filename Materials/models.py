@@ -4,6 +4,8 @@ from django.db import models
 class Project(models.Model):
     name = models.CharField('Nome', max_length=100)
     client = models.CharField('Cliente', max_length=100, blank=True)
+    description = models.TextField('Descrição', blank=True)
+    completed = models.BooleanField('Completado ?', default=False)
 
     def __str__(self):
         return self.name + ((' para ' + self.client) if self.client != '' else '')
@@ -22,7 +24,7 @@ class Apostila(models.Model):
     submissionDate = models.DateField(auto_now_add=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True, help_text="Opcional. Adicione se a apostila faz parte de algum projeto.")
     categories = models.ManyToManyField(Categoria, blank=True)
-    file = models.FileField('Arquivo', blank=True, help_text="Se estiver modificando o arquivo da Apostila, NÃO SELECIONE limpar e outro arquivo ao mesmo tempo.")
+    file = models.FileField(blank=True, help_text="Se estiver modificando o arquivo da Apostila, NÃO SELECIONE limpar e outro arquivo ao mesmo tempo.")
     url = models.URLField('URL', blank=True)
 
     def __str__(self):

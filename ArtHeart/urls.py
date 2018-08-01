@@ -30,6 +30,7 @@ urlpatterns = [
     path('search/', materialsViews.search, name='url_search'),
     path('delete/<int:pk>', materialsViews.delete, name='url_delete'),
     path('detail/<str:pk>', materialsViews.detail, name='url_detail'),
+    path('projects/', materialsViews.projects, name='url_projects'),
 ]
 
 if settings.DEBUG is True:

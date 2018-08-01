@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 
 from ArtHeart.settings import MEDIA_ROOT
 import os
-from .forms import ApostilaUpload
+from .forms import ApostilaUpload, ProjectUpload
 
 # Create your views here.
 def search(request):
@@ -66,6 +66,19 @@ def detail(request, pk):
                 data['edit'] = False
             return render(request, 'Materials/details.html', )
 
+def projects(request):
+    data = {}
+    data['projects'] = Project.objects.all()
+    data['form'] = ProjectUpload()
+    if request.method == 'POST':
+        form = ProjectUpload(request.POST or None)
+        if form.is_valid():
+            form.save()
+        data['projects'] = Project.objects.all()
+        data['form'] = form
+        return render(request, 'Materials/projects.html', data)
+    else:
+        return render(request, 'Materials/projects.html', data)
         
 def deleteFile(pk):
     ap = Apostila.objects.get(pk=pk)

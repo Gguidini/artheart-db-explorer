@@ -1,0 +1,78 @@
+{% extends 'Planner/base.html' %}
+{% load staticfiles %}
+
+{% block header %}
+<title>Projetos</title>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<style>
+    .my-card {
+        max-width: 15em;
+        margin-left: 8px;
+        margin-right: 8px;
+        height: 15em;
+    }
+
+    h6 {
+        font-size: 85%;
+    }
+
+    label {
+        display: block;
+        font-size: 110%;
+        color: dimgray;
+    }
+
+    #formBtn {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    form {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" >
+        <p><button class="btn btn-success" type="button" data-toggle="collapse" data-target="#collapse" aria-expanded="false" aria-controls="collapseExample"> Adicionar Projeto <span class="glyphicon glyphicon-plus-sign"></span>
+        </button></p>
+        <div class="collapse" id="collapse">
+            <form method="POST" >
+                {% csrf_token %}
+                {{ form }}
+
+                <button id="formBtn" type="submit" class="btn btn-success">Salvar</button>
+            </form>
+        </div>
+    <div class="container w3-row-padding" style="display: inline;">
+        {% for p in projects %}
+            <div class="w3-display-container w3-card-4 w3-margin-top w3-col s3 my-card ">
+                <header class="w3-container" >
+                        <h3 class="card-title">{{ p.name }}</h3>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ p.client }}</h6>
+                </header>
+                <div class="w3-container">
+                    <p class="card-text" style="height: 5em; overflow: hidden;">{{ p.description}}</p>
+                </div> 
+                <footer class="w3-container w3-light-green" style="max-width: 15em; width: 100%; position: absolute; bottom: 0px; left: 0em;">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <a href="#" class="btn" style="color: darkblue; font-weight: bold">Editar</a>
+                            </div>
+                            <div class="col-sm-2 bg-info" style="text-align: left; margin-left: -2%;">
+                                {% if p.completed == True %}
+                                    <p style="margin-left: -1.2em" class="glyphicon glyphicon-ok btn"></p>
+                                {% else %}
+                                    <p style="margin-left: -1.2em;" class="glyphicon glyphicon-remove btn"></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                </footer>
+            </div>
+        {% endfor %}
+    </div>
+    </div>
+{% endblock %}
