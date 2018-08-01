@@ -1,0 +1,73 @@
+{% extends 'Planner/base.html' %}
+{% load staticfiles %}
+{% block header %}
+<title>Apostilas</title>
+{% endblock %}
+
+{% block content %}
+<div class="conteiner-fluid">
+                <div class="col-md-4">
+                        <h2 style="vertical-align: top; text-align: center">Apostilas Disponíveis</h2>
+                </div>
+                <div class="col-md-2">
+                     
+                    <a class="btn btn-success" href="{% url 'url_detail' -1 %}">Adicionar <span class="glyphicon glyphicon-plus-sign"></span></a>
+                </div>
+		<div class="col-md-6">
+
+            <form action="{% url 'url_search' %}" method="GET">
+                {% csrf_token %}
+                <div class="form-inline">
+                <input class="form-control" type="text" name="search" placeholder="Buscar">
+                <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-search"></span></button>
+                    <button type="button" class="btn btn-success" data-toggle="collapse" data-target="#filters"><span class="glyphicon glyphicon-filter"></span> Filtros</button>
+                </div>
+                <div class="row" style="margin-top: 2%">
+                    <div id="filters" class="collapse form-inline">
+                        <label for="project" class="col-sm-2 control-label" style="color: dimgray">Projeto: </label>
+                        <select name="project" id="project" class="form-control">
+                            <option selected value> ------- </option>
+                            {% for project in projects %}
+                            <option value="{{project.id}}">{{ project.name|safe }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="row" style="margin-top: 1%">
+                            <label for="categories" class="col-sm-2 control-label" style="color: dimgray">Categorias: </label>
+                            <select name="categories" id="categories" class="form-control" multiple >
+                                {% for category in categories %}
+                                <option value="{{category.id}}">{{ category.category|safe }}</option>
+                                {% endfor %}
+                            </select>
+                            <p style="color: darkgray; margin-top: 1%">Pressione <img src="{% static 'Materials/assets/ctrl.jpeg' %}" alt="Control key" style="max-width: 5%" align="middle"> para selecionar mais de uma categoria.</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+<table class="table table-hover table-striped" style="margin-top: 2%">
+    <thead>
+      <tr class="bg-success">
+        <th scope="col">ID</th>
+        <th scope="col">Título</th>
+        <th scope="col">Categorias</th>
+        <th scope="col">Projeto</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for ap in entries %}
+        <tr>
+            <th scope="row"><a href="{% url 'url_detail' ap.id %}">{{ ap.id|safe }}</a></th>
+            <td title="{{ ap.description }}">{{ ap.title }}</td>
+            <td>{% for cat in ap.categories.all %}
+                {{ cat.category }},
+                {% endfor %}
+            </td>
+            <td>{{ ap.project }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

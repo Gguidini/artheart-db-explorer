@@ -1,0 +1,74 @@
+{% extends 'Planner/base.html' %}
+{% load staticfiles %}
+
+{% block header %}
+    <script>
+        {% if edit %}
+        function myConfirm(str){
+            if (confirm(str))
+                location.href = "{% url 'url_delete' doc.id %}";
+        }
+        {% endif %}
+    </script>
+
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        .fieldWrapper {
+            align-content: center;
+            align-self: center;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            {% if edit %}
+                <button  onclick="myConfirm('Certeza que quer deletar {{ doc }} ?')">Deletar</button>
+            {% endif %}
+                <button  onclick="location.href = '{% url 'url_search' %}' ">Voltar</button>
+
+            <form enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    {% if field.name != 'file' and field.name != 'url' %}
+                        <div class="fieldWrapper">
+                            {{ field.errors }}
+                            {{ field.label_tag }}<br>{{ field }}
+                            {% if field.help_text %}
+                            <i class="fas fa-info-circle help" title="{{ field.help_text|safe }}"></i>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <div id="File" class="fieldWrapper">
+                        {{ form.file.errors}}
+                        {{ form.file.label_tag}} {{ form.file }}
+                        {% if form.file.help_text %}
+                                <i class="fas fa-info-circle help" title="{{ form.file.help_text|safe }}"></i>
+                        {% endif %}
+                </div>
+                <div id="url" class="fieldWrapper">
+                        {{ form.url.errors}}
+                        {{ form.url.label_tag}} {{ form.url }}
+                        {% if form.url.help_text %}
+                                <i class="fas fa-info-circle help" title="{{ form.url.help_text|safe }}"></i>
+                        {% endif %}
+                </div>
+                <button type="submit" class="btn btn-success">Salvar</button>
+                {% if edit %}
+                    <button onclick=""></button>
+                {% endif %}
+            </form>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
+{% endblock %}
