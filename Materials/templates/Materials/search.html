@@ -2,18 +2,31 @@
 {% load staticfiles %}
 {% block header %}
 <title>Apostilas</title>
+<style>
+    h2 {
+        text-align: center;
+        color: #5cb85c;
+        
+
+    }
+
+    .center {
+        text-align: center;
+        margin-top: 1%;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="conteiner-fluid">
                 <div class="col-md-4">
-                        <h2 style="vertical-align: top; text-align: center">Apostilas Disponíveis</h2>
+                        <h2>Apostilas Disponíveis</h2>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 center">
                      
                     <a class="btn btn-success" href="{% url 'url_detail' -1 %}">Adicionar <span class="glyphicon glyphicon-plus-sign"></span></a>
                 </div>
-		<div class="col-md-6">
+		<div class="col-md-6 center">
 
             <form action="{% url 'url_search' %}" method="GET">
                 {% csrf_token %}

@@ -2,6 +2,8 @@
 {% load staticfiles %}
 
 {% block header %}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
     <script>
         {% if edit %}
         function myConfirm(str){
@@ -19,6 +21,12 @@
         .fieldWrapper {
             align-content: center;
             align-self: center;
+            text-align: center;
+        }
+
+        .label {
+            font-size: 110%;
+            color: dimgray;
         }
     </style>
 {% endblock %}
@@ -27,45 +35,28 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2"></div>
-        <div class="col-md-8">
+        <div class="col-md-8 fieldWrapper">
+            <div style="margin: 2%">
             {% if edit %}
-                <button  onclick="myConfirm('Certeza que quer deletar {{ doc }} ?')">Deletar</button>
+                <button  class="btn btn-danger" onclick="myConfirm('Certeza que quer deletar {{ doc }} ?')">Deletar</button>
             {% endif %}
-                <button  onclick="location.href = '{% url 'url_search' %}' ">Voltar</button>
-
+                <button  class="btn btn-success" onclick="location.href = '{% url 'url_search' %}' ">Voltar</button>
+            </div>
             <form enctype="multipart/form-data" method="POST">
                 {% csrf_token %}
 
                 {% for field in form %}
-                    {% if field.name != 'file' and field.name != 'url' %}
-                        <div class="fieldWrapper">
+                        <div class="fieldWrapper form-group">
                             {{ field.errors }}
-                            {{ field.label_tag }}<br>{{ field }}
+                            <span class="label">{{ field.label_tag }}</span>
+                            <br>
+                            {{ field }}
                             {% if field.help_text %}
                             <i class="fas fa-info-circle help" title="{{ field.help_text|safe }}"></i>
                             {% endif %}
                         </div>
-                    {% endif %}
                 {% endfor %}
-
-                <div id="File" class="fieldWrapper">
-                        {{ form.file.errors}}
-                        {{ form.file.label_tag}} {{ form.file }}
-                        {% if form.file.help_text %}
-                                <i class="fas fa-info-circle help" title="{{ form.file.help_text|safe }}"></i>
-                        {% endif %}
-                </div>
-                <div id="url" class="fieldWrapper">
-                        {{ form.url.errors}}
-                        {{ form.url.label_tag}} {{ form.url }}
-                        {% if form.url.help_text %}
-                                <i class="fas fa-info-circle help" title="{{ form.url.help_text|safe }}"></i>
-                        {% endif %}
-                </div>
-                <button type="submit" class="btn btn-success">Salvar</button>
-                {% if edit %}
-                    <button onclick=""></button>
-                {% endif %}
+                <button style="margin: 2%;" type="submit" class="btn btn-success">Salvar</button>
             </form>
         </div>
         <div class="col-md-2"></div>

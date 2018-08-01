@@ -22,8 +22,8 @@ class Apostila(models.Model):
     submissionDate = models.DateField(auto_now_add=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True, help_text="Opcional. Adicione se a apostila faz parte de algum projeto.")
     categories = models.ManyToManyField(Categoria, blank=True)
-    file = models.FileField(blank=True)
-    url = models.URLField('URL para Documento', blank=True)
+    file = models.FileField('Arquivo', blank=True, help_text="Se estiver modificando o arquivo da Apostila, NÃO SELECIONE limpar e outro arquivo ao mesmo tempo.")
+    url = models.URLField('URL', blank=True)
 
     def __str__(self):
         return self.title
