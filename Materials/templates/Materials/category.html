@@ -1,0 +1,52 @@
+{% extends 'Planner/base.html' %}
+{% load staticfiles %}
+
+{% block header %}
+<title>Categorias</title>
+<style>
+    label {
+        display: block;
+        font-size: 110%;
+        color: dimgray;
+    }
+
+    #formBtn {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 2%;
+    }
+
+    form {
+        text-align: center;
+    }
+
+    .title {
+        color:  #5cb85c;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="conteiner-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <ul class="list-group" style="margin-left: 5%; margin-right: 5%;">
+                {% for c in cat %}
+                <li class="list-group-item">{{ c.category }} <a href="{% url 'url_category' c.id %}" class="badge btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h2 class="title">Adicionar Categoria </h2>
+            <form action="{% url 'url_category' %}" method="POST">
+                {% csrf_token %}
+                {{ form }}
+
+                <button id="formBtn" type="submit" class="btn btn-success">Salvar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

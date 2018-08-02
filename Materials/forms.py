@@ -12,3 +12,9 @@ class ProjectUpload(django.forms.ModelForm):
     class Meta:
         model = Project
         fields = ['name', 'client', 'description']
+
+class CategoryUpload(django.forms.ModelForm):
+    """ Form for Categoria model (see models.py) """
+    class Meta:
+        model = Categoria
+        fields = ['category']
