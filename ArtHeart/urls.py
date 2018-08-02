@@ -29,8 +29,10 @@ urlpatterns = [
     path('', plannerViews.index, name='url_index'),
     path('search/', materialsViews.search, name='url_search'),
     path('delete/<int:pk>', materialsViews.delete, name='url_delete'),
+    path('degete_project/<int:pk>', materialsViews.delete_project, name='url_del_project'),
     path('detail/<str:pk>', materialsViews.detail, name='url_detail'),
     path('projects/', materialsViews.projects, name='url_projects'),
+    path('edit_project/<int:pk>', materialsViews.edit_project, name='url_edit_project')
 ]
 
 if settings.DEBUG is True:

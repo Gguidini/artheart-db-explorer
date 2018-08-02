@@ -1,3 +1,9 @@
+"""
+This file defines functions to manipulate user interaction with the web-interface.
+
+Responsible for views related to the models defined in Materials/models.py.
+"""
+
 from django.shortcuts import render, HttpResponse, redirect
 from .models import Apostila, Project, Categoria
 from django.urls import reverse_lazy
@@ -8,6 +14,13 @@ from .forms import ApostilaUpload, ProjectUpload
 
 # Create your views here.
 def search(request):
+    """
+    Shows all available Apostilas. 
+    It's possible to search by title, category, and project.
+
+    Template for this view is 'Materials/seatch.html'
+    Links to detail view.
+    """
     data = {}
     projs = Project.objects.all()
     cats = Categoria.objects.all()
@@ -30,6 +43,12 @@ def search(request):
     return render(request, 'Materials/search.html', data)
 
 def detail(request, pk):
+    """
+    Edit existing Apostila or add new one.
+    On successful operation, returns to search view.
+
+    Template for this view is 'Materials/detail.html'
+    """
     pk = int(pk)
     if request.method == 'GET':
         if pk != -1:
@@ -67,6 +86,13 @@ def detail(request, pk):
             return render(request, 'Materials/details.html', )
 
 def projects(request):
+    """
+    Shows available Projects. Also possible to add new Project.
+    Quick glance at Project's title, client, and state of completion.
+
+    Template for this view is 'Materials/projects.html'
+    Links to edit_project view.
+    """
     data = {}
     data['projects'] = Project.objects.all()
     data['form'] = ProjectUpload()
@@ -79,8 +105,29 @@ def projects(request):
         return render(request, 'Materials/projects.html', data)
     else:
         return render(request, 'Materials/projects.html', data)
+
+def edit_project(request, pk):
+    p = Project.objects.get(pk=pk)
+    form = ProjectUpload(instance=p)
+    entries = p.apostila_set.all()
+    data = {'doc':p, 'form':form, 'entries':entries}
+    if request.method == 'POST':
+        form = ProjectUpload(request.POST, instance=p)
+        if form.is_valid():
+            entry = form.save(commit=False)
+            if 'completed' in request.POST:
+                entry.completed = True
+            entry.save()
+            return redirect(reverse_lazy('url_projects'))
+        else:
+            data['form'] = form
+            return render(request, 'Materials/edit_project.html', data)
+    return render(request, 'Materials/edit_project.html', data)
         
 def deleteFile(pk):
+    """
+    Deletes a file referenced by an Apostila.
+    """
     ap = Apostila.objects.get(pk=pk)
     try:
         os.remove(os.path.join(MEDIA_ROOT, str(ap.file)))
@@ -95,4 +142,15 @@ def delete(request, pk):
         doc = Apostila.objects.get(pk=pk)
         deleteFile(pk)
         doc.delete()
-        return redirect('url_search')
+    return redirect('url_search')
+
+def delete_project(request, pk):
+    if request.user.is_authenticated:
+        p = Project.objects.get(pk=pk)
+        aps = p.apostila_set.all()
+        for a in aps:
+            # deletes files referenced by Apostilas that are part of the project
+            deleteFile(a.id)
+            a.delete()
+        p.delete()
+    return redirect('url_projects')

@@ -1,0 +1,101 @@
+{% extends 'Planner/base.html' %}
+{% load staticfiles %}
+
+{% block header %}
+<title>Editar Projeto</title>
+    <script>
+        function myConfirm(str){
+            if (confirm(str))
+                location.href = "{% url 'url_del_project' doc.id %}";
+        }
+    </script>
+    <style>
+        .title {
+            color:  #5cb85c;
+            text-align: center;
+        }
+
+        form {
+        text-align: center;
+        }
+
+        label, .label {
+        display: block;
+        font-size: 110%;
+        color: dimgray;
+        }
+
+        .auto {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 1em;
+            margin-bottom: 1em;
+            text-align: center;
+        }
+
+        .fake-radio {
+            -webkit-appearance: button;
+            /* WebKit */
+            -moz-appearance: button;
+            /* Mozilla */
+            -o-appearance: button;
+            /* Opera */
+            -ms-appearance: button;
+            /* Internet Explorer */
+            appearance: button;
+            /* CSS3 */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+        <h2 class="title">Projeto {{ doc.name}}</h2>
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8 fieldWrapper">
+                <div class="auto">
+                    <button  class="btn btn-danger" onclick="myConfirm('Certeza que quer deletar {{ doc }} ?\n ATENÇÃO Deletar um projeto irá deletar as apostilas associadas ao projeto.')">Deletar</button>
+                    <button  class="btn btn-success" onclick="location.href = '{% url 'url_projects' %}' ">Voltar</button>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+            <form method="POST">
+                {% csrf_token %}
+
+                {{ form }}
+
+                <p class="label">Projeto Concluído</p>
+                <label for="completed" class="glyphicon glyphicon-ok"></label>
+                <input type="radio" value="True" name="completed" id="completed">
+
+                <button type="submit" class="btn btn-success auto" style="display: block;">Salvar</button>
+            </form>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <h3 class="title">Apostilas Associadas a Este Projeto</h3>
+
+            <table class="table table-hover table-striped" style="margin-top: 2%">
+                <thead>
+                  <tr class="bg-success">
+                    <th scope="col">ID</th>
+                    <th scope="col">Título</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for ap in entries %}
+                    <tr>
+                        <th scope="row"><a href="{% url 'url_detail' ap.id %}">{{ ap.id|safe }}</a></th>
+                        <td title="{{ ap.description }}">{{ ap.title }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+</div>
+{% endblock %}
