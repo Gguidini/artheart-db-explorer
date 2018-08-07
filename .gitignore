@@ -111,3 +111,6 @@ venv.bak/
 
 # Development database
 db.sqlite3
+
+# Files in the database
+media/

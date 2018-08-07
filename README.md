@@ -1,4 +1,4 @@
-# Personal Apostila Manager
+﻿# Personal Apostila Manager
 
 ### Context
 My mom is an artist. She has a lot of digital files with patters, guides, models, etc. The sheer amount of files is very hard to manage, so I've created this simple web-app to provide CRUD functions and store the files in a database.
@@ -13,6 +13,8 @@ Even though it's made using Django, it was never intended to become a real websi
 [ ] Login and Logout
 
 ## Installation
+**Nota**: In Windows systems it's necessary to install Python (version 3) first.
+
 1. Install `virtualenv` for isolated virtual environment
     `sudo apt-get install virtualenv` 
     `pacman -S python-virtualenv`
@@ -24,7 +26,8 @@ Even though it's made using Django, it was never intended to become a real websi
     `virtualenv –p /usr/bin/python3 venv`
 
 4. Initiate virtualenv 
-    `source <name>/bin/activate` 
+    `source venv/bin/activate` 
+    `source venv\Scripts\activate (Windows)`
 
 5. Install required packages
     `pip install -r requirements.txt` 

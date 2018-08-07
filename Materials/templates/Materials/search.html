@@ -77,7 +77,10 @@
                 {{ cat.category }},
                 {% endfor %}
             </td>
-            <td>{{ ap.project }}</td>
+            <td>{% for p in ap.project.all %}
+                {{ p.name }},
+                {% endfor %}
+            </td>
         </tr>
     {% endfor %}
     </tbody>

@@ -40,7 +40,7 @@ class Apostila(models.Model):
     description = models.TextField('Descrição', blank=True)
     author = models.CharField('Autor', max_length=50, blank=True)
     submissionDate = models.DateField(auto_now_add=True)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True, help_text="Opcional. Adicione se a apostila faz parte de algum projeto.")
+    project = models.ManyToManyField(Project, blank=True, null=True, help_text="Opcional. Adicione se a apostila faz parte de algum projeto.")
     categories = models.ManyToManyField(Categoria, blank=True)
     file = models.FileField(blank=True, help_text="Se estiver modificando o arquivo da Apostila, NÃO SELECIONE limpar e outro arquivo ao mesmo tempo.")
     url = models.URLField('URL', blank=True)

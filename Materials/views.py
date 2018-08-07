@@ -71,11 +71,15 @@ def detail(request, pk):
             if form.is_valid() :
                 entry = form.save()
                 cats = request.POST.getlist('categories')
+                projects = request.POST.getlist('project')
                 selected = []
                 for c in cats:
                     selected.append(Categoria.objects.get(pk=c))
-
                 entry.categories.set(selected)
+                selected = []
+                for p in projects:
+                    selected.append(Project.objects.get(pk=p))
+                entry.project.set(selected)
                 entry.save()
                 return redirect(reverse_lazy('url_search'))
             else:
@@ -195,8 +199,7 @@ def delete_project(request, pk):
         p = Project.objects.get(pk=pk)
         aps = p.apostila_set.all()
         for a in aps:
-            # deletes files referenced by Apostilas that are part of the project
-            deleteFile(a.id)
-            a.delete()
+            # desociates project and Apostila
+            a.project.remove(p)
         p.delete()
     return redirect('url_projects')
