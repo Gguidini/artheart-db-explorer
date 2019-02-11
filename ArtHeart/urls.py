@@ -23,11 +23,6 @@ import Planner.views as plannerViews
 import Materials.views as materialsViews
 
 urlpatterns = [
-    # Admin stuff - not fully integrated to system yet
-    path('admin/', admin.site.urls, name='url_admin'),
-    path('admin/', authViews.login, name='url_login'),
-    path('logout', authViews.logout, name='url_logout'),
-
     # Index  view - Planner
     path('', plannerViews.index, name='url_index'),
 

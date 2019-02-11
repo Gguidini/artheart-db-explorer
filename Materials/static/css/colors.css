@@ -1,0 +1,19 @@
+.green {
+    color: #5cb85c;
+}
+
+.darkgray {
+    color: darkgray;
+}
+
+.bkgd-green {
+    background-color: #5cb85c;
+}
+
+.bkgd-red {
+    background-color: red;
+}
+
+.hidden {
+    display: none;
+}

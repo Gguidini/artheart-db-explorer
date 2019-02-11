@@ -2,12 +2,19 @@
 {% load staticfiles %}
 {% block header %}
 <title>Apostilas</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{% static 'css/colors.css' %}">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
+
+    .margin {
+        margin: 16px;
+    }
+
     h2 {
         text-align: center;
         color: #5cb85c;
-        
-
     }
 
     .center {
@@ -15,16 +22,46 @@
         margin-top: 1%;
     }
 </style>
+<script>
+    function show_help() {
+        var panel = document.getElementById("help_panel");
+        panel.classList.toggle("hidden");
+    }
+
+    function open_media(file, url) {
+        if(url.length > 0 && confirm('Abrir url da apostila?')){
+            window.open(url, '_blank');
+        }
+        if (/\/media\/.+/g.test(file) && confirm('Abrir arquivo da apostila?')){
+            window.open(file, '_blank')
+        }
+    }
+</script>
 {% endblock %}
 
 {% block content %}
 <div class="conteiner-fluid">
+
+    <div class="conteiner margin">
+        <button class="btn btn-success btn-lg" type="button" onmouseover="show_help()" onmouseout="show_help()" aria-haspopup="true" aria-expanded="false">
+            Ajuda <i class="fa fa-question-circle-o"></i>
+        </button>
+            <div class="panel panel-success hidden bkgd-green" id="help_panel">
+                <div class="panel-body" style="color: white; font-size: 12pt;">
+                    <ul>
+                        <li>Deixe o mouse sobre uma linha da tabela para ver a descrição da apostila.</li>
+                        <li>Clique sobre o ID da apostila para <strong>editá-la</strong>.</li>
+                        <li>Clique na linha para <strong>visualizar</strong> a apostila.</li>
+                    </ul>
+                </div>
+        </div>
+    </div>
                 <div class="col-md-4">
                         <h2>Apostilas Disponíveis</h2>
                 </div>
                 <div class="col-md-2 center">
                      
-                    <a class="btn btn-success" href="{% url 'url_detail' -1 %}">Adicionar Apostila <span class="glyphicon glyphicon-plus-sign"></span></a>
+                    <a class="btn btn-success btn-lg" href="{% url 'url_detail' -1 %}">Adicionar Apostila <span class="glyphicon glyphicon-plus-sign"></span></a>
                 </div>
 		<div class="col-md-6 center">
 
@@ -32,8 +69,10 @@
                 {% csrf_token %}
                 <div class="form-inline">
                 <input class="form-control" type="text" name="search" placeholder="Buscar">
-                <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-search"></span></button>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-search"></span></button>
                     <button type="button" class="btn btn-success" data-toggle="collapse" data-target="#filters"><span class="glyphicon glyphicon-filter"></span> Filtros</button>
+                </div>
                 </div>
                 <div class="row" style="margin-top: 2%">
                     <div id="filters" class="collapse form-inline">
@@ -59,31 +98,45 @@
         </div>
 	</div>
 
-<table class="table table-hover table-striped" style="margin-top: 2%">
-    <thead>
-      <tr class="bg-success">
-        <th scope="col">ID</th>
-        <th scope="col">Título</th>
-        <th scope="col">Categorias</th>
-        <th scope="col">Projeto</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for ap in entries %}
-        <tr>
-            <th scope="row"><a href="{% url 'url_detail' ap.id %}">{{ ap.id|safe }}</a></th>
-            <td title="{{ ap.description }}">{{ ap.title }}</td>
-            <td>{% for cat in ap.categories.all %}
-                {{ cat.category }},
-                {% endfor %}
-            </td>
-            <td>{% for p in ap.project.all %}
-                {{ p.name }},
-                {% endfor %}
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+    <div class="container-fluid margin">
+        <table class="table table-hover table-striped" style="margin-top: 1em;">
+            <thead>
+            <tr class="bg-success" style="position: sticky">
+                <th scope="col">ID</th>
+                <th scope="col">Título</th>
+                <th scope="col">Categorias</th>
+                <th scope="col">Projeto</th>
+                <th scope="col">Media</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ap in entries %}
+                <tr title="{{ ap.description }}">
+                    <td><a href="{% url 'url_detail' ap.id %}" class="badge bkgd-green" style="font-weight: bolder">{{ ap.id|safe }}</a></td>
+                    <td onclick="open_media('{{media}}{{ap.file}}', '{{ap.url}}')" style="cursor: pointer;">{{ ap.title }}</td>
+                    <td onclick="open_media('{{media}}{{ap.file}}', '{{ap.url}}')" style="cursor: pointer;">{% for cat in ap.categories.all %}
+                        {{ cat.category }},
+                        {% endfor %}
+                    </td>
+                    <td onclick="open_media('{{media}}{{ap.file}}', '{{ap.url}}')" style="cursor: pointer;">{% for p in ap.project.all %}
+                        {{ p.name }},
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if ap.file %}
+                        <span class="glyphicon glyphicon-file" style="font-size: 1.5em;"></span>
+                        {% endif %}
+                        {% if ap.url %}
+                        <i class="material-icons" style="font-size: 1.5em;">link</i>
+                        {% endif %}
+                        {% if not ap.file and not ap.url %}
+                        <span class="glyphicon glyphicon-remove-sign" style="color: red; font-size: 1.5em;"></span>
+                        {% endif %}
+
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 </div>
 {% endblock %}

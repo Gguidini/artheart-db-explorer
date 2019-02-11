@@ -1,0 +1,26 @@
+.my-card {
+    max-width: 15em;
+    margin-left: 8px;
+    margin-right: 8px;
+    height: 15em;
+}
+
+h6 {
+    font-size: 85%;
+}
+
+label {
+    display: block;
+    font-size: 110%;
+    color: dimgray;
+}
+
+#formBtn {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+form {
+    text-align: center;
+}
