@@ -109,7 +109,7 @@ def projects(request):
     data = {}
     data['projects'] = Project.objects.all()
     data['form'] = ProjectUpload()
-    if request.method == 'POST' and request.user.is_authenticated:
+    if request.method == 'POST':
         form = ProjectUpload(request.POST or None)
         if form.is_valid():
             form.save()
@@ -127,25 +127,23 @@ def edit_project(request, pk):
 
     Template for this view is 'Materials/edit_project.html'
     """
-    if request.user.is_authenticated:
-        p = Project.objects.get(pk=pk)
-        form = ProjectUpload(instance=p)
-        entries = p.apostila_set.all()
-        data = {'doc': p, 'form': form, 'entries':entries}
-        if request.method == 'POST':
-            form = ProjectUpload(request.POST, instance=p)
-            if form.is_valid():
-                entry = form.save(commit=False)
-                if 'completed' in request.POST:
-                    entry.completed = True
-                entry.save()
-                return redirect(reverse_lazy('url_projects'))
-            else:
-                data['form'] = form
-                return render(request, 'Materials/edit_project.html', data)
-        return render(request, 'Materials/edit_project.html', data)
-    else:
-        return HttpResponseForbidden()
+    p = Project.objects.get(pk=pk)
+    form = ProjectUpload(instance=p)
+    entries = p.apostila_set.all()
+    data = {'doc': p, 'form': form, 'entries':entries}
+    if request.method == 'POST':
+        form = ProjectUpload(request.POST, instance=p)
+        if form.is_valid():
+            entry = form.save(commit=False)
+            if 'completed' in request.POST:
+                entry.completed = True
+            entry.save()
+            return redirect(reverse_lazy('url_projects'))
+        else:
+            data['form'] = form
+            return render(request, 'Materials/edit_project.html', data)
+    return render(request, 'Materials/edit_project.html', data)
+
 
 
 def category(request, pk):
@@ -190,10 +188,9 @@ def delete(request, pk):
 
     Has no template.
     """
-    if request.user.is_authenticated:
-        doc = Apostila.objects.get(pk=pk)
-        deleteFile(pk)
-        doc.delete()
+    doc = Apostila.objects.get(pk=pk)
+    deleteFile(pk)
+    doc.delete()
     return redirect('url_search')
 
 
@@ -204,11 +201,10 @@ def delete_project(request, pk):
 
     Has no template.
     """
-    if request.user.is_authenticated:
-        p = Project.objects.get(pk=pk)
-        aps = p.apostila_set.all()
-        for a in aps:
-            # desociates project and Apostila
-            a.project.remove(p)
-        p.delete()
+    p = Project.objects.get(pk=pk)
+    aps = p.apostila_set.all()
+    for a in aps:
+        # desociates project and Apostila
+        a.project.remove(p)
+    p.delete()
     return redirect('url_projects')
