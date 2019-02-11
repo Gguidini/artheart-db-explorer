@@ -114,3 +114,4 @@ db.sqlite3
 
 # Files in the database
 media/
+static/
