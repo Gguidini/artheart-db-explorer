@@ -4,14 +4,17 @@ This file defines functions to manipulate user interaction with the web-interfac
 Responsible for views related to the models defined in Materials/models.py.
 """
 
-from django.shortcuts import render, HttpResponse, redirect
-from .models import Apostila, Project, Categoria
-from django.urls import reverse_lazy
+import os
+
+from django.core.paginator import Paginator
 from django.http import HttpResponseForbidden
+from django.shortcuts import HttpResponse, redirect, render
+from django.urls import reverse_lazy
 
 from ArtHeart.settings import MEDIA_ROOT, MEDIA_URL
-import os
-from .forms import ApostilaUpload, ProjectUpload, CategoryUpload
+
+from .forms import ApostilaUpload, CategoryUpload, ProjectUpload
+from .models import Apostila, Categoria, Project
 
 # Create your views here.
 
@@ -25,12 +28,17 @@ def search(request):
     Links to detail view.
     """
     data = {}
-    projs = Project.objects.all()
-    cats = Categoria.objects.all()
+    projs = Project.objects.all().order_by('name')
+    cats = Categoria.objects.all().order_by('category')
     data['projects'] = projs
     data['categories'] = cats
     data['media'] = MEDIA_URL
     aps = Apostila.objects.all()
+
+    # Paginator
+    paginator = Paginator(aps, 30)
+    page = request.GET.get('page')
+    aps = paginator.get_page(page)
     # filter entries to be displayed
     if request.method == 'GET' and not request.GET == {}:
         if 'search' in request.GET:
@@ -107,7 +115,7 @@ def projects(request):
     Links to edit_project view.
     """
     data = {}
-    data['projects'] = Project.objects.all()
+    data['projects'] = Project.objects.all().order_by('name')
     data['form'] = ProjectUpload()
     if request.method == 'POST':
         form = ProjectUpload(request.POST or None)
@@ -163,7 +171,7 @@ def category(request, pk):
         if form.is_valid():
             form.save()
 
-    cats = Categoria.objects.all()
+    cats = Categoria.objects.all().order_by('name')
     form = CategoryUpload()
     data = {'cat': cats, 'form': form}
     return render(request, 'Materials/category.html', data)

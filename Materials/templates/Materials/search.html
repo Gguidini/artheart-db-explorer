@@ -21,10 +21,16 @@
         text-align: center;
         margin-top: 1%;
     }
+
+    .current {
+        color: dimgray;
+        font-size: 14pt;
+    }
+
 </style>
 <script>
-    function show_help() {
-        var panel = document.getElementById("help_panel");
+    function show_help(target) {
+        var panel = document.getElementById(target);
         panel.classList.toggle("hidden");
     }
 
@@ -40,10 +46,10 @@
 {% endblock %}
 
 {% block content %}
+<!-- Botão de Ajuda -->
 <div class="conteiner-fluid">
-
     <div class="conteiner margin">
-        <button class="btn btn-success btn-lg" type="button" onmouseover="show_help()" onmouseout="show_help()" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-success btn-lg" type="button" onmouseover="show_help('help_panel')" onmouseout="show_help('help_panel')" aria-haspopup="true" aria-expanded="false">
             Ajuda <i class="fa fa-question-circle-o"></i>
         </button>
             <div class="panel panel-success hidden bkgd-green" id="help_panel">
@@ -56,26 +62,35 @@
                 </div>
         </div>
     </div>
-                <div class="col-md-4">
-                        <h2>Apostilas Disponíveis</h2>
-                </div>
-                <div class="col-md-2 center">
-                     
-                    <a class="btn btn-success btn-lg" href="{% url 'url_detail' -1 %}">Adicionar Apostila <span class="glyphicon glyphicon-plus-sign"></span></a>
-                </div>
-		<div class="col-md-6 center">
-
+</div>
+<!-- /Botão de Ajuda -->
+<!-- Barra de título e filtros -->
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Apostilas Disponíveis</h2>
+        </div>
+        <div class="col-md-2 center">
+    
+            <a class="btn btn-success btn-lg" href="{% url 'url_detail' -1 %}">Adicionar Apostila
+                <span class="glyphicon glyphicon-plus-sign"></span>
+            </a>
+        </div>
+        <div class="col-md-6 center">
+    
             <form action="{% url 'url_search' %}" method="GET">
                 {% csrf_token %}
                 <div class="form-inline">
-                <input class="form-control" type="text" name="search" placeholder="Buscar">
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-search"></span></button>
-                    <button type="button" class="btn btn-success" data-toggle="collapse" data-target="#filters"><span class="glyphicon glyphicon-filter"></span> Filtros</button>
-                </div>
+                    <input class="form-control" type="text" name="search" placeholder="Buscar">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="submit" class="btn btn-success">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="show_help('filters')">
+                            <span class="glyphicon glyphicon-filter"></span> Filtros</button>
+                    </div>
                 </div>
                 <div class="row" style="margin-top: 2%">
-                    <div id="filters" class="collapse form-inline">
+                    <div id="filters" class="form-inline hidden">
                         <label for="project" class="col-sm-2 control-label" style="color: dimgray">Projeto: </label>
                         <select name="project" id="project" class="form-control">
                             <option selected value> ------- </option>
@@ -85,30 +100,54 @@
                         </select>
                         <div class="row" style="margin-top: 1%">
                             <label for="categories" class="col-sm-2 control-label" style="color: dimgray">Categorias: </label>
-                            <select name="categories" id="categories" class="form-control" multiple >
+                            <select name="categories" id="categories" class="form-control" multiple>
                                 {% for category in categories %}
                                 <option value="{{category.id}}">{{ category.category|safe }}</option>
                                 {% endfor %}
                             </select>
-                            <p style="color: darkgray; margin-top: 1%">Pressione <img src="{% static 'Materials/assets/ctrl.jpeg' %}" alt="Control key" style="max-width: 5%" align="middle"> para selecionar mais de uma categoria.</p>
+                            <p style="color: darkgray; margin-top: 1%">Pressione
+                                <img src="{% static 'Materials/assets/ctrl.jpeg' %}" alt="Control key" style="max-width: 5%"
+                                    align="middle"> para selecionar mais de uma categoria.</p>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
-	</div>
+    </div>
+    <!-- Barra de título e filtros -->
+    <!-- Paginator BEGIN -->
+    <div class="container-fluid" style="text-align: center;">
+        <span class="step-links" >
+            {% if entries.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ entries.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ entries.number }} of {{ entries.paginator.num_pages }}
+            </span>
+    
+            {% if entries.has_next %}
+                <a href="?page={{ entries.next_page_number }}">next</a>
+                <a href="?page={{ entries.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    <!-- Paginator END -->
 
     <div class="container-fluid margin">
         <table class="table table-hover table-striped" style="margin-top: 1em;">
-            <thead>
-            <tr class="bg-success" style="position: sticky">
-                <th scope="col">ID</th>
-                <th scope="col">Título</th>
-                <th scope="col">Categorias</th>
-                <th scope="col">Projeto</th>
-                <th scope="col">Media</th>
-            </tr>
-            </thead>
+            <div style="position: sticky">
+                <thead>
+                    <tr class="bg-success">
+                        <th scope="col">ID</th>
+                        <th scope="col">Título</th>
+                        <th scope="col">Categorias</th>
+                        <th scope="col">Projeto</th>
+                        <th scope="col">Media</th>
+                    </tr>
+                </thead>
+            </div>
             <tbody>
             {% for ap in entries %}
                 <tr title="{{ ap.description }}">
