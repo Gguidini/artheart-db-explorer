@@ -35,10 +35,6 @@ def search(request):
     data['media'] = MEDIA_URL
     aps = Apostila.objects.all()
 
-    # Paginator
-    paginator = Paginator(aps, 30)
-    page = request.GET.get('page')
-    aps = paginator.get_page(page)
     # filter entries to be displayed
     if request.method == 'GET' and not request.GET == {}:
         if 'search' in request.GET:
@@ -51,6 +47,10 @@ def search(request):
         if 'categories' in request.GET:
             cats = request.GET.getlist('categories')
             aps = aps.filter(categories__in=cats)
+    # Paginator
+    paginator = Paginator(aps, 30)
+    page = request.GET.get('page')
+    aps = paginator.get_page(page)
     data['entries'] = aps
     return render(request, 'Materials/search.html', data)
 
