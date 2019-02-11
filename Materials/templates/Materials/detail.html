@@ -51,6 +51,9 @@
                             {{ field.errors }}
                             <span class="label">{{ field.label_tag }}</span>
                             <br>
+                            {% if field.name == "categories" %}
+                                <p style="color: darkgray; margin-top: 1%">Pressione <img src="{% static 'Materials/assets/ctrl.jpeg' %}" alt="Control key" style="max-width: 3%"              align="middle"> para selecionar mais de uma categoria.</p>
+                            {% endif %}
                             {{ field }}
                             {% if field.help_text %}
                             <i class="fas fa-info-circle help" title="{{ field.help_text|safe }}"></i>
