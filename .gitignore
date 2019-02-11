@@ -115,3 +115,9 @@ db.sqlite3
 # Files in the database
 media/
 static/
+
+# The database itself
+db.sqlite3
+
+# No idea what this file is
+.directory
