@@ -153,11 +153,11 @@ def category(request, pk):
     Template for this view is 'Materials/category.html'
     """
     if request.method == 'GET':
-        if pk != None:
-            try:
-                Categoria.objects.get(pk=pk).delete()
-            except:
-                pass
+        if pk is not None:
+            #try:
+            Categoria.objects.get(pk=pk).delete()
+            #except:
+            #    print("Shit happened")
     else:
         form = CategoryUpload(request.POST or None)
         if form.is_valid():

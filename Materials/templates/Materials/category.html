@@ -26,6 +26,7 @@
         text-align: center;
     }
 </style>
+<link rel="stylesheet" href="{% static 'css/colors.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -34,7 +35,7 @@
         <div class="col-md-6">
             <ul class="list-group" style="margin-left: 5%; margin-right: 5%;">
                 {% for c in cat %}
-                <li class="list-group-item">{{ c.category }} <a href="{% url 'url_category' c.id %}" class="badge btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a></li>
+                <li class="list-group-item">{{ c.category }} <a href="{% url 'url_category' c.id %}" class="badge bkgd-red"><span class="glyphicon glyphicon-remove"></span></a></li>
                 {% endfor %}
             </ul>
         </div>
