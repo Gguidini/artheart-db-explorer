@@ -9,14 +9,16 @@ from .models import Apostila, Project, Categoria
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden
 
-from ArtHeart.settings import MEDIA_ROOT
+from ArtHeart.settings import MEDIA_ROOT, MEDIA_URL
 import os
 from .forms import ApostilaUpload, ProjectUpload, CategoryUpload
 
 # Create your views here.
+
+
 def search(request):
     """
-    Shows all available Apostilas. 
+    Shows all available Apostilas.
     It's possible to search by title, category, and project.
 
     Template for this view is 'Materials/seatch.html'
@@ -27,6 +29,7 @@ def search(request):
     cats = Categoria.objects.all()
     data['projects'] = projs
     data['categories'] = cats
+    data['media'] = MEDIA_URL
     aps = Apostila.objects.all()
     # filter entries to be displayed
     if request.method == 'GET' and not request.GET == {}:
@@ -43,6 +46,7 @@ def search(request):
     data['entries'] = aps
     return render(request, 'Materials/search.html', data)
 
+
 def detail(request, pk):
     """
     Edit existing Apostila or add new one.
@@ -50,48 +54,48 @@ def detail(request, pk):
 
     Template for this view is 'Materials/detail.html'
     """
-    if request.user.is_authenticated:
-        pk = int(pk)
-        if request.method == 'GET':
-            if pk != -1:
-                ap = Apostila.objects.get(pk=pk)
-                form = ApostilaUpload(instance=ap)
-                data = {'doc':ap, 'form':form, 'edit':True }
-            else:
-                form = ApostilaUpload()
-                data = { 'form':form, 'edit':False }
-            return render(request, 'Materials/detail.html', data)
+    pk = int(pk)
+    if request.method == 'GET':
+        if pk != -1:
+            ap = Apostila.objects.get(pk=pk)
+            form = ApostilaUpload(instance=ap)
+            data = {'doc': ap, 'form': form, 'edit': True}
         else:
-            if pk != -1:
-                if 'file-clear' in request.POST or 'file' in request.FILES:
-                    deleteFile(pk)
-                form = ApostilaUpload(request.POST or None, request.FILES or None, instance=Apostila.objects.get(pk=pk))
-            else:
-                form = ApostilaUpload(request.POST or None, request.FILES or None)
-            if form.is_valid() :
-                entry = form.save()
-                cats = request.POST.getlist('categories')
-                projects = request.POST.getlist('project')
-                selected = []
-                for c in cats:
-                    selected.append(Categoria.objects.get(pk=c))
-                entry.categories.set(selected)
-                selected = []
-                for p in projects:
-                    selected.append(Project.objects.get(pk=p))
-                entry.project.set(selected)
-                entry.save()
-                return redirect(reverse_lazy('url_search'))
-            else:
-                data = {'form':form}
-                if pk != -1:
-                    data['doc'] = Apostila.objects.get(pk=pk)
-                    data['edit'] = True
-                else:
-                    data['edit'] = False
-                return render(request, 'Materials/details.html', )
+            form = ApostilaUpload()
+            data = {'form': form, 'edit': False}
+        return render(request, 'Materials/detail.html', data)
     else:
-        return HttpResponseForbidden()
+        if pk != -1:
+            if 'file-clear' in request.POST or 'file' in request.FILES:
+                deleteFile(pk)
+            form = ApostilaUpload(
+                request.POST or None, request.FILES or None, instance=Apostila.objects.get(pk=pk))
+        else:
+            form = ApostilaUpload(
+                request.POST or None, request.FILES or None)
+        if form.is_valid():
+            entry = form.save()
+            cats = request.POST.getlist('categories')
+            projects = request.POST.getlist('project')
+            selected = []
+            for c in cats:
+                selected.append(Categoria.objects.get(pk=c))
+            entry.categories.set(selected)
+            selected = []
+            for p in projects:
+                selected.append(Project.objects.get(pk=p))
+            entry.project.set(selected)
+            entry.save()
+            return redirect(reverse_lazy('url_search'))
+        else:
+            data = {'form': form}
+            if pk != -1:
+                data['doc'] = Apostila.objects.get(pk=pk)
+                data['edit'] = True
+            else:
+                data['edit'] = False
+            return render(request, 'Materials/details.html', )
+
 
 def projects(request):
     """
@@ -115,6 +119,7 @@ def projects(request):
     else:
         return render(request, 'Materials/projects.html', data)
 
+
 def edit_project(request, pk):
     """
     Manages de editing of an existing Project.
@@ -126,7 +131,7 @@ def edit_project(request, pk):
         p = Project.objects.get(pk=pk)
         form = ProjectUpload(instance=p)
         entries = p.apostila_set.all()
-        data = {'doc':p, 'form':form, 'entries':entries}
+        data = {'doc': p, 'form': form, 'entries':entries}
         if request.method == 'POST':
             form = ProjectUpload(request.POST, instance=p)
             if form.is_valid():
@@ -141,7 +146,8 @@ def edit_project(request, pk):
         return render(request, 'Materials/edit_project.html', data)
     else:
         return HttpResponseForbidden()
-        
+
+
 def category(request, pk):
     """
     Manages creation and Deletion of Categoria.
@@ -161,8 +167,9 @@ def category(request, pk):
 
     cats = Categoria.objects.all()
     form = CategoryUpload()
-    data = {'cat':cats, 'form':form}
+    data = {'cat': cats, 'form': form}
     return render(request, 'Materials/category.html', data)
+
 
 def deleteFile(pk):
     """
@@ -174,7 +181,8 @@ def deleteFile(pk):
     try:
         os.remove(os.path.join(MEDIA_ROOT, str(ap.file)))
     except:
-        pass # silence error when no file is there
+        pass  # silence error when no file is there
+
 
 def delete(request, pk):
     """
@@ -187,6 +195,7 @@ def delete(request, pk):
         deleteFile(pk)
         doc.delete()
     return redirect('url_search')
+
 
 def delete_project(request, pk):
     """
